@@ -1,0 +1,845 @@
+/* ===== 기본 설정 ===== */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+:root {
+    --bg-dark: #0a0a0f;
+    --bg-panel: #12121a;
+    --bg-card: #1a1a25;
+    --bg-hover: #252535;
+    --accent-primary: #00f5ff;
+    --accent-secondary: #ff006e;
+    --accent-gold: #ffd700;
+    --accent-green: #00ff88;
+    --accent-purple: #9b59b6;
+    --accent-orange: #f39c12;
+    --text-primary: #ffffff;
+    --text-secondary: #8892b0;
+    --text-muted: #5a6070;
+    --border-glow: rgba(0, 245, 255, 0.2);
+    --shadow-glow: 0 0 30px rgba(0, 245, 255, 0.15);
+}
+
+body {
+    font-family: 'Rajdhani', sans-serif;
+    background: var(--bg-dark);
+    color: var(--text-primary);
+    min-height: 100vh;
+    overflow: hidden;
+    background-image: 
+        radial-gradient(ellipse at 20% 20%, rgba(0, 245, 255, 0.08) 0%, transparent 40%),
+        radial-gradient(ellipse at 80% 80%, rgba(255, 0, 110, 0.08) 0%, transparent 40%),
+        radial-gradient(ellipse at 50% 50%, rgba(155, 89, 182, 0.05) 0%, transparent 60%);
+}
+
+/* ===== 게임 컨테이너 ===== */
+.game-container {
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+    max-width: 1800px;
+    margin: 0 auto;
+    padding: 8px;
+    gap: 8px;
+}
+
+/* ===== 헤더 ===== */
+.game-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px 20px;
+    background: linear-gradient(135deg, var(--bg-panel), var(--bg-card));
+    border-radius: 12px;
+    border: 1px solid var(--border-glow);
+    box-shadow: var(--shadow-glow);
+}
+
+.header-left h1 {
+    font-family: 'Orbitron', sans-serif;
+    font-size: 1.4rem;
+    font-weight: 900;
+    background: linear-gradient(90deg, var(--accent-primary), var(--accent-secondary), var(--accent-gold));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    letter-spacing: 2px;
+    text-shadow: 0 0 30px rgba(0, 245, 255, 0.5);
+}
+
+.stats-bar {
+    display: flex;
+    gap: 20px;
+}
+
+.stat {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: rgba(0, 0, 0, 0.4);
+    padding: 8px 16px;
+    border-radius: 20px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    transition: all 0.3s ease;
+}
+
+.stat:hover {
+    border-color: var(--accent-primary);
+    transform: translateY(-2px);
+}
+
+.stat-icon { font-size: 1.2rem; }
+.stat-value {
+    font-family: 'Orbitron', sans-serif;
+    font-size: 1.2rem;
+    font-weight: 700;
+    min-width: 35px;
+}
+
+.gold-stat .stat-value { color: var(--accent-gold); }
+.lives-stat .stat-value { color: #ff6b6b; }
+.wave-stat .stat-value { color: var(--accent-primary); }
+.kills-stat .stat-value { color: var(--accent-secondary); }
+
+.speed-controls {
+    display: flex;
+    gap: 5px;
+    background: rgba(0, 0, 0, 0.3);
+    padding: 4px;
+    border-radius: 10px;
+}
+
+.speed-btn {
+    font-family: 'Orbitron', sans-serif;
+    font-size: 0.85rem;
+    font-weight: 700;
+    padding: 8px 14px;
+    border: none;
+    border-radius: 8px;
+    background: transparent;
+    color: var(--text-secondary);
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.speed-btn:hover { color: var(--text-primary); }
+.speed-btn.active {
+    background: linear-gradient(135deg, var(--accent-primary), #0099cc);
+    color: var(--bg-dark);
+    box-shadow: 0 0 15px rgba(0, 245, 255, 0.4);
+}
+
+/* ===== 메인 영역 ===== */
+.game-main {
+    display: flex;
+    flex: 1;
+    gap: 10px;
+    min-height: 0;
+}
+
+/* ===== 타워 패널 ===== */
+.tower-panel {
+    width: 200px;
+    background: linear-gradient(180deg, var(--bg-panel), var(--bg-card));
+    border-radius: 12px;
+    border: 1px solid var(--border-glow);
+    padding: 15px;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    overflow-y: auto;
+    box-shadow: var(--shadow-glow);
+}
+
+.tower-panel::-webkit-scrollbar { width: 4px; }
+.tower-panel::-webkit-scrollbar-track { background: transparent; }
+.tower-panel::-webkit-scrollbar-thumb { background: var(--accent-primary); border-radius: 4px; }
+
+.tower-panel h2 {
+    font-family: 'Orbitron', sans-serif;
+    font-size: 1rem;
+    color: var(--accent-gold);
+    text-align: center;
+    letter-spacing: 2px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid rgba(255, 215, 0, 0.2);
+}
+
+.tower-list {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 8px;
+}
+
+.tower-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 5px;
+    padding: 10px 5px;
+    background: var(--bg-card);
+    border-radius: 10px;
+    border: 2px solid transparent;
+    cursor: pointer;
+    transition: all 0.25s ease;
+}
+
+.tower-item:hover {
+    border-color: var(--accent-primary);
+    background: var(--bg-hover);
+    transform: scale(1.05);
+}
+
+.tower-item.selected {
+    border-color: var(--accent-gold);
+    background: rgba(255, 215, 0, 0.1);
+    box-shadow: 0 0 20px rgba(255, 215, 0, 0.3);
+}
+
+.tower-item.disabled {
+    opacity: 0.35;
+    cursor: not-allowed;
+    transform: none !important;
+}
+
+.tower-preview {
+    width: 44px;
+    height: 44px;
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* 기본 타워 - 원형 + 포신 */
+.basic-tower {
+    width: 32px;
+    height: 32px;
+    background: radial-gradient(circle at 30% 30%, #8ec5ff, #4a90d9 60%, #2c5aa0);
+    border-radius: 50%;
+    box-shadow: 0 0 12px rgba(74, 144, 217, 0.6), inset 0 -3px 6px rgba(0,0,0,0.3);
+    border: 2px solid #2c5aa0;
+}
+.basic-tower::after {
+    content: '';
+    position: absolute;
+    width: 18px;
+    height: 8px;
+    background: linear-gradient(to right, #3a7fc9, #2c5aa0);
+    border-radius: 2px;
+    right: 2px;
+    top: 50%;
+    transform: translateY(-50%);
+    box-shadow: 1px 0 4px rgba(0,0,0,0.4);
+}
+
+/* 스나이퍼 타워 - 원형 + 긴 포신 */
+.sniper-tower {
+    width: 30px;
+    height: 30px;
+    background: radial-gradient(circle at 30% 30%, #d4a5e8, #9b59b6 60%, #6c3483);
+    border-radius: 50%;
+    box-shadow: 0 0 12px rgba(155, 89, 182, 0.6), inset 0 -3px 6px rgba(0,0,0,0.3);
+    border: 2px solid #6c3483;
+}
+.sniper-tower::after {
+    content: '';
+    position: absolute;
+    width: 24px;
+    height: 6px;
+    background: linear-gradient(to right, #7d3c98, #512e5f);
+    border-radius: 1px 3px 3px 1px;
+    right: 0;
+    top: 50%;
+    transform: translateY(-50%);
+    box-shadow: 2px 0 5px rgba(0,0,0,0.5);
+}
+.sniper-tower::before {
+    content: '🎯';
+    position: absolute;
+    font-size: 10px;
+    top: -2px;
+    right: -2px;
+}
+
+/* 스플래시 타워 - 원형 + 두꺼운 포신 */
+.splash-tower {
+    width: 32px;
+    height: 32px;
+    background: radial-gradient(circle at 30% 30%, #f5a89a, #e74c3c 60%, #a93226);
+    border-radius: 50%;
+    box-shadow: 0 0 12px rgba(231, 76, 60, 0.6), inset 0 -3px 6px rgba(0,0,0,0.3);
+    border: 2px solid #a93226;
+}
+.splash-tower::after {
+    content: '';
+    position: absolute;
+    width: 14px;
+    height: 12px;
+    background: linear-gradient(to right, #c0392b, #7b241c);
+    border-radius: 2px 6px 6px 2px;
+    right: 4px;
+    top: 50%;
+    transform: translateY(-50%);
+    box-shadow: 1px 0 4px rgba(0,0,0,0.4);
+}
+.splash-tower::before {
+    content: '💥';
+    position: absolute;
+    font-size: 10px;
+    top: -4px;
+    right: -4px;
+}
+
+/* 슬로우 타워 - 원형 + 눈꽃 */
+.slow-tower {
+    width: 32px;
+    height: 32px;
+    background: radial-gradient(circle at 30% 30%, #7fecda, #00d4aa 60%, #00a085);
+    border-radius: 50%;
+    box-shadow: 0 0 15px rgba(0, 212, 170, 0.7), inset 0 -3px 6px rgba(0,0,0,0.2);
+    border: 2px solid #00a085;
+}
+.slow-tower::after {
+    content: '❄️';
+    position: absolute;
+    font-size: 16px;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    filter: drop-shadow(0 0 3px #00f5ff);
+}
+
+/* 레이저 타워 - 다이아몬드 형태 */
+.laser-tower {
+    width: 28px;
+    height: 28px;
+    background: linear-gradient(135deg, #ff8fbc 0%, #ff006e 50%, #cc0058 100%);
+    transform: rotate(45deg);
+    box-shadow: 0 0 15px rgba(255, 0, 110, 0.7), inset 0 -3px 6px rgba(0,0,0,0.3);
+    border: 2px solid #cc0058;
+}
+.laser-tower::after {
+    content: '⚡';
+    position: absolute;
+    font-size: 14px;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%) rotate(-45deg);
+    filter: drop-shadow(0 0 4px #ff006e);
+}
+.laser-tower::before {
+    content: '';
+    position: absolute;
+    width: 4px;
+    height: 20px;
+    background: linear-gradient(to top, #ff006e, #ffffff, #ff006e);
+    top: -16px;
+    left: 50%;
+    transform: translateX(-50%) rotate(-45deg);
+    border-radius: 2px;
+    box-shadow: 0 0 8px #ff006e;
+    opacity: 0.8;
+}
+
+/* 폭탄 타워 - 팔각형 */
+.bomb-tower {
+    width: 32px;
+    height: 32px;
+    background: radial-gradient(circle at 30% 30%, #fde68a, #f39c12 60%, #d68910);
+    clip-path: polygon(30% 0%, 70% 0%, 100% 30%, 100% 70%, 70% 100%, 30% 100%, 0% 70%, 0% 30%);
+    box-shadow: 0 0 12px rgba(243, 156, 18, 0.6);
+}
+.bomb-tower::after {
+    content: '💣';
+    position: absolute;
+    font-size: 18px;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+
+/* 독 타워 - 원형 + 독 기호 */
+.poison-tower {
+    width: 32px;
+    height: 32px;
+    background: radial-gradient(circle at 30% 30%, #a9f5c5, #50fa7b 60%, #27ae60);
+    border-radius: 50%;
+    box-shadow: 0 0 15px rgba(80, 250, 123, 0.6), inset 0 -3px 6px rgba(0,0,0,0.2);
+    border: 2px solid #27ae60;
+    animation: poison-bubble 2s ease-in-out infinite;
+}
+.poison-tower::after {
+    content: '☠️';
+    position: absolute;
+    font-size: 16px;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+.poison-tower::before {
+    content: '';
+    position: absolute;
+    width: 6px;
+    height: 6px;
+    background: #50fa7b;
+    border-radius: 50%;
+    top: -4px;
+    left: 50%;
+    transform: translateX(-50%);
+    animation: bubble-rise 1.5s ease-in-out infinite;
+    opacity: 0.7;
+}
+
+@keyframes poison-bubble {
+    0%, 100% { box-shadow: 0 0 15px rgba(80, 250, 123, 0.6), inset 0 -3px 6px rgba(0,0,0,0.2); }
+    50% { box-shadow: 0 0 25px rgba(80, 250, 123, 0.9), inset 0 -3px 6px rgba(0,0,0,0.2); }
+}
+
+@keyframes bubble-rise {
+    0% { transform: translateX(-50%) translateY(0); opacity: 0.7; }
+    100% { transform: translateX(-50%) translateY(-8px); opacity: 0; }
+}
+
+.tower-info {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 2px;
+}
+
+.tower-name {
+    font-weight: 600;
+    font-size: 0.75rem;
+    color: var(--text-primary);
+}
+
+.tower-cost {
+    font-family: 'Orbitron', sans-serif;
+    font-size: 0.7rem;
+    color: var(--accent-gold);
+}
+
+/* ===== 스킬 섹션 ===== */
+.skills-section {
+    padding-top: 10px;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.skills-section h2 {
+    font-family: 'Orbitron', sans-serif;
+    font-size: 0.9rem;
+    color: var(--accent-purple);
+    margin-bottom: 10px;
+}
+
+.skill-list {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.skill-btn {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 12px;
+    background: var(--bg-card);
+    border: 2px solid transparent;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    color: var(--text-primary);
+}
+
+.skill-btn:hover:not(:disabled) {
+    border-color: var(--accent-purple);
+    background: var(--bg-hover);
+}
+
+.skill-btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.skill-icon { font-size: 1.3rem; }
+.skill-name { font-weight: 600; font-size: 0.85rem; flex: 1; text-align: left; }
+.skill-cooldown {
+    font-family: 'Orbitron', sans-serif;
+    font-size: 0.75rem;
+    color: var(--accent-secondary);
+}
+
+/* ===== 업그레이드 패널 ===== */
+.upgrade-panel {
+    padding-top: 15px;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.upgrade-panel h3 {
+    font-family: 'Orbitron', sans-serif;
+    font-size: 0.9rem;
+    color: var(--accent-green);
+    margin-bottom: 10px;
+}
+
+#selectedTowerInfo {
+    background: rgba(0, 0, 0, 0.3);
+    padding: 12px;
+    border-radius: 8px;
+    font-size: 0.85rem;
+    line-height: 1.5;
+    margin-bottom: 12px;
+}
+
+.tower-stats {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    margin-top: 8px;
+    font-size: 0.8rem;
+    color: var(--text-secondary);
+}
+
+.upgrade-buttons {
+    display: flex;
+    gap: 8px;
+}
+
+/* ===== 게임 영역 ===== */
+.game-area {
+    flex: 1;
+    position: relative;
+    background: var(--bg-panel);
+    border-radius: 12px;
+    border: 2px solid var(--border-glow);
+    overflow: hidden;
+    box-shadow: var(--shadow-glow), inset 0 0 100px rgba(0, 0, 0, 0.5);
+}
+
+#gameCanvas {
+    display: block;
+    width: 100%;
+    height: 100%;
+    cursor: crosshair;
+}
+
+/* ===== 오버레이 ===== */
+.game-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(10, 10, 15, 0.95);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 100;
+    backdrop-filter: blur(10px);
+}
+
+.game-overlay.hidden { display: none; }
+
+.overlay-content {
+    text-align: center;
+    padding: 40px 60px;
+    background: linear-gradient(135deg, var(--bg-panel), var(--bg-card));
+    border-radius: 20px;
+    border: 2px solid var(--accent-primary);
+    box-shadow: 0 0 60px rgba(0, 245, 255, 0.3);
+    max-width: 600px;
+    max-height: 80vh;
+    overflow-y: auto;
+}
+
+.overlay-content h2 {
+    font-family: 'Orbitron', sans-serif;
+    font-size: 2rem;
+    margin-bottom: 15px;
+    background: linear-gradient(90deg, var(--accent-primary), var(--accent-gold));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+.overlay-content p {
+    font-size: 1.1rem;
+    color: var(--text-secondary);
+    margin-bottom: 25px;
+}
+
+/* ===== 맵 선택 ===== */
+.map-select {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    margin: 20px 0;
+}
+
+.map-option {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    padding: 15px 20px;
+    background: var(--bg-card);
+    border: 2px solid transparent;
+    border-radius: 12px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.map-option:hover {
+    border-color: var(--accent-primary);
+    transform: translateX(10px);
+}
+
+.map-preview {
+    width: 60px;
+    height: 60px;
+    border-radius: 10px;
+}
+
+.easy-map { background: linear-gradient(135deg, #2d5a27, #4a8c3f); }
+.normal-map { background: linear-gradient(135deg, #c2956e, #8b6914); }
+.hard-map { background: linear-gradient(135deg, #3d1f1f, #8b2500); }
+
+.map-info {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 4px;
+}
+
+.map-name {
+    font-family: 'Orbitron', sans-serif;
+    font-size: 1.1rem;
+    font-weight: 700;
+}
+
+.map-diff {
+    font-size: 0.85rem;
+    color: var(--accent-gold);
+}
+
+.map-desc {
+    font-size: 0.8rem;
+    color: var(--text-secondary);
+}
+
+/* ===== 게임 통계 ===== */
+.game-stats {
+    text-align: left;
+    margin: 20px 0;
+}
+
+.game-stats h3 {
+    font-family: 'Orbitron', sans-serif;
+    font-size: 1rem;
+    color: var(--accent-primary);
+    margin: 20px 0 15px 0;
+    padding-bottom: 8px;
+    border-bottom: 1px solid rgba(0, 245, 255, 0.2);
+}
+
+.stats-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px;
+}
+
+.stat-item {
+    display: flex;
+    justify-content: space-between;
+    padding: 10px 15px;
+    background: rgba(0, 0, 0, 0.3);
+    border-radius: 8px;
+    font-size: 0.9rem;
+}
+
+.stat-item span:first-child { color: var(--text-secondary); }
+.stat-item span:last-child { color: var(--accent-gold); font-family: 'Orbitron', sans-serif; }
+
+.achievements-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.achievement-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    padding: 6px 12px;
+    background: rgba(255, 215, 0, 0.1);
+    border: 1px solid var(--accent-gold);
+    border-radius: 20px;
+    font-size: 0.8rem;
+    color: var(--accent-gold);
+}
+
+/* ===== 버튼 ===== */
+.btn {
+    font-family: 'Orbitron', sans-serif;
+    font-size: 0.9rem;
+    font-weight: 700;
+    padding: 12px 25px;
+    border: none;
+    border-radius: 25px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.btn-start {
+    background: linear-gradient(135deg, var(--accent-primary), #0099cc);
+    color: var(--bg-dark);
+    box-shadow: 0 0 25px rgba(0, 245, 255, 0.4);
+}
+
+.btn-start:hover {
+    transform: scale(1.05);
+    box-shadow: 0 0 40px rgba(0, 245, 255, 0.6);
+}
+
+.btn-wave {
+    background: linear-gradient(135deg, var(--accent-green), #00a060);
+    color: var(--bg-dark);
+    box-shadow: 0 0 20px rgba(0, 255, 136, 0.3);
+}
+
+.btn-wave:hover:not(:disabled) {
+    transform: scale(1.05);
+    box-shadow: 0 0 30px rgba(0, 255, 136, 0.5);
+}
+
+.btn-wave:disabled {
+    background: #333;
+    color: #666;
+    cursor: not-allowed;
+    box-shadow: none;
+}
+
+.btn-upgrade {
+    flex: 1;
+    background: linear-gradient(135deg, var(--accent-gold), #cc9900);
+    color: var(--bg-dark);
+    font-size: 0.75rem;
+    padding: 10px;
+}
+
+.btn-upgrade:disabled {
+    background: #444;
+    color: #888;
+}
+
+.btn-sell {
+    flex: 1;
+    background: linear-gradient(135deg, var(--accent-secondary), #cc0055);
+    color: white;
+    font-size: 0.75rem;
+    padding: 10px;
+}
+
+/* ===== 푸터 ===== */
+.game-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px 20px;
+    background: linear-gradient(135deg, var(--bg-panel), var(--bg-card));
+    border-radius: 12px;
+    border: 1px solid var(--border-glow);
+}
+
+.controls-info {
+    display: flex;
+    gap: 25px;
+    color: var(--text-muted);
+    font-size: 0.85rem;
+}
+
+/* ===== 업적 토스트 ===== */
+.achievement-toast {
+    position: fixed;
+    top: 20px;
+    right: -350px;
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    padding: 15px 25px;
+    background: linear-gradient(135deg, var(--bg-panel), var(--bg-card));
+    border: 2px solid var(--accent-gold);
+    border-radius: 15px;
+    box-shadow: 0 0 40px rgba(255, 215, 0, 0.4);
+    z-index: 1000;
+    transition: right 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+}
+
+.achievement-toast.show { right: 20px; }
+
+.achievement-icon { font-size: 2.5rem; }
+
+.achievement-info {
+    display: flex;
+    flex-direction: column;
+}
+
+.achievement-title {
+    font-size: 0.8rem;
+    color: var(--text-secondary);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.achievement-name {
+    font-family: 'Orbitron', sans-serif;
+    font-size: 1.2rem;
+    color: var(--accent-gold);
+}
+
+/* ===== 애니메이션 ===== */
+@keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.7; }
+}
+
+@keyframes glow {
+    0%, 100% { filter: brightness(1); }
+    50% { filter: brightness(1.2); }
+}
+
+.tower-item:hover .tower-preview { 
+    animation: glow 1s ease-in-out infinite; 
+    transform: scale(1.1);
+    transition: transform 0.2s ease;
+}
+
+/* ===== 반응형 ===== */
+@media (max-width: 1200px) {
+    .tower-panel { width: 180px; }
+    .tower-list { grid-template-columns: 1fr; }
+}
+
+@media (max-width: 900px) {
+    .game-main { flex-direction: column; }
+    .tower-panel {
+        width: 100%;
+        flex-direction: row;
+        flex-wrap: wrap;
+        justify-content: center;
+        padding: 10px;
+    }
+    .tower-list {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+    }
+    .skills-section, .upgrade-panel {
+        width: 100%;
+    }
+}

@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🏰 타워 디펜스 - Tower Defense</title>
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Rajdhani:wght@400;500;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="game-container">
+        <header class="game-header">
+            <div class="header-left">
+                <h1>⚔️ TOWER DEFENSE</h1>
+            </div>
+            <div class="stats-bar">
+                <div class="stat gold-stat">
+                    <span class="stat-icon">💰</span>
+                    <span id="gold" class="stat-value">100</span>
+                </div>
+                <div class="stat lives-stat">
+                    <span class="stat-icon">❤️</span>
+                    <span id="lives" class="stat-value">20</span>
+                </div>
+                <div class="stat wave-stat">
+                    <span class="stat-icon">🌊</span>
+                    <span class="stat-value"><span id="wave">0</span>/<span id="totalWaves">25</span></span>
+                </div>
+                <div class="stat kills-stat">
+                    <span class="stat-icon">💀</span>
+                    <span id="kills" class="stat-value">0</span>
+                </div>
+            </div>
+            <div class="header-right">
+                <div class="speed-controls">
+                    <button class="speed-btn active" data-speed="1" onclick="setGameSpeed(1)">1x</button>
+                    <button class="speed-btn" data-speed="2" onclick="setGameSpeed(2)">2x</button>
+                    <button class="speed-btn" data-speed="3" onclick="setGameSpeed(3)">3x</button>
+                </div>
+            </div>
+        </header>
+
+        <main class="game-main">
+            <aside class="tower-panel">
+                <h2>🗼 타워</h2>
+                <div class="tower-list">
+                    <div class="tower-item" data-tower="basic">
+                        <div class="tower-preview basic-tower"></div>
+                        <div class="tower-info">
+                            <span class="tower-name">기본</span>
+                            <span class="tower-cost">💰50</span>
+                        </div>
+                    </div>
+                    <div class="tower-item" data-tower="sniper">
+                        <div class="tower-preview sniper-tower"></div>
+                        <div class="tower-info">
+                            <span class="tower-name">스나이퍼</span>
+                            <span class="tower-cost">💰100</span>
+                        </div>
+                    </div>
+                    <div class="tower-item" data-tower="splash">
+                        <div class="tower-preview splash-tower"></div>
+                        <div class="tower-info">
+                            <span class="tower-name">스플래시</span>
+                            <span class="tower-cost">💰150</span>
+                        </div>
+                    </div>
+                    <div class="tower-item" data-tower="slow">
+                        <div class="tower-preview slow-tower"></div>
+                        <div class="tower-info">
+                            <span class="tower-name">슬로우</span>
+                            <span class="tower-cost">💰75</span>
+                        </div>
+                    </div>
+                    <div class="tower-item" data-tower="laser">
+                        <div class="tower-preview laser-tower"></div>
+                        <div class="tower-info">
+                            <span class="tower-name">레이저</span>
+                            <span class="tower-cost">💰300</span>
+                        </div>
+                    </div>
+                    <div class="tower-item" data-tower="bomb">
+                        <div class="tower-preview bomb-tower"></div>
+                        <div class="tower-info">
+                            <span class="tower-name">폭탄</span>
+                            <span class="tower-cost">💰180</span>
+                        </div>
+                    </div>
+                    <div class="tower-item" data-tower="poison">
+                        <div class="tower-preview poison-tower"></div>
+                        <div class="tower-info">
+                            <span class="tower-name">독</span>
+                            <span class="tower-cost">💰120</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="skills-section">
+                    <h2>⚡ 스킬</h2>
+                    <div class="skill-list">
+                        <button class="skill-btn" data-skill="nuke" onclick="useSkill('nuke')">
+                            <span class="skill-icon">💥</span>
+                            <span class="skill-name">핵폭탄</span>
+                            <span class="skill-cooldown"></span>
+                        </button>
+                        <button class="skill-btn" data-skill="freeze" onclick="useSkill('freeze')">
+                            <span class="skill-icon">❄️</span>
+                            <span class="skill-name">빙결</span>
+                            <span class="skill-cooldown"></span>
+                        </button>
+                        <button class="skill-btn" data-skill="goldRush" onclick="useSkill('goldRush')">
+                            <span class="skill-icon">💰</span>
+                            <span class="skill-name">골드러시</span>
+                            <span class="skill-cooldown"></span>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="upgrade-panel" id="upgradePanel" style="display: none;">
+                    <h3>🔧 타워 정보</h3>
+                    <div id="selectedTowerInfo"></div>
+                    <div class="upgrade-buttons">
+                        <button id="upgradeBtn" class="btn btn-upgrade">업그레이드</button>
+                        <button id="sellBtn" class="btn btn-sell">판매</button>
+                    </div>
+                </div>
+            </aside>
+
+            <div class="game-area">
+                <canvas id="gameCanvas"></canvas>
+                <div class="game-overlay" id="gameOverlay">
+                    <div class="overlay-content">
+                        <h2 id="overlayTitle">🏰 타워 디펜스</h2>
+                        <p id="overlayMessage">기지를 지켜라!</p>
+                        <button id="startBtn" class="btn btn-start">게임 시작</button>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <footer class="game-footer">
+            <button id="nextWaveBtn" class="btn btn-wave" disabled>다음 웨이브 🌊</button>
+            <div class="controls-info">
+                <span>🖱️ 클릭: 배치/선택</span>
+                <span>⌨️ ESC: 취소</span>
+                <span>⌨️ P: 일시정지</span>
+                <span>⌨️ 1/2/3: 속도</span>
+            </div>
+        </footer>
+    </div>
+
+    <script src="js/pathfinding.js"></script>
+    <script src="js/particles.js"></script>
+    <script src="js/enemy.js"></script>
+    <script src="js/tower.js"></script>
+    <script src="js/game.js"></script>
+</body>
+</html>
